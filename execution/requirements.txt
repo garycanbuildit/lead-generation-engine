@@ -1,0 +1,20 @@
+# Core dependencies for execution scripts
+python-dotenv>=1.0.0
+
+# GMB Lead Scraper dependencies
+requests>=2.31.0
+
+# Lead Enrichment dependencies
+beautifulsoup4>=4.12.0
+
+# Google Sheets Export dependencies
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.1.1
+google-api-python-client>=2.100.0
+
+# Optional: For future scraping methods
+# playwright>=1.40.0
+# selenium>=4.15.0
+# beautifulsoup4>=4.12.0
+# pandas>=2.1.0

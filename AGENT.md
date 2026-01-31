@@ -4,7 +4,7 @@ This agent follows a **DOE loop**:
 **Directive → Observation → Experiment**
 
 The purpose is to convert human intent into **reliable, repeatable outputs**.
-AI is probabilistic. Business logic must be deterministic.  
+AI is probabilistic. Business logic must be deterministic.  
 This system separates those responsibilities to reduce error over time.
 
 ## The 3-Layer Architecture
@@ -23,9 +23,9 @@ This system separates those responsibilities to reduce error over time.
 
 You connect intent to execution.
 
-Example:  
-You don’t scrape sites yourself.  
-You read `directives/scrape_website.md`, determine inputs/outputs, then run  
+Example:  
+You don’t scrape sites yourself.  
+You read `directives/scrape_website.md`, determine inputs/outputs, then run  
 `execution/scrape_single_site.py`.
 
 ### **Layer 3: Execution (Doing the work)**
@@ -36,7 +36,7 @@ You read `directives/scrape_website.md`, determine inputs/outputs, then run
 
 If something runs more than once, it belongs in code.
 
-**Why this works:**  
+**Why this works:**  
 Errors compound.
 Deterministic scripts increases reliability
 
@@ -47,18 +47,18 @@ Before writing anything new:
 - Review `execution/` based on the directive
 - Only create a script if no suitable tool exists
 
-### **2. Self-anneal on failure**  
+### **2. Self-anneal on failure**  
 (**Observation → Experiment**)
 - Read the error message and stack trace
-- Fix the root issue in the script and test again  
-  (Confirm with the user if paid tokens or credits are involved)
-- Update the directive with what you learned  
-  (API limits, timing constraints, edge cases)
+- Fix the root issue in the script and test again  
+  (Confirm with the user if paid tokens or credits are involved)
+- Update the directive with what you learned  
+  (API limits, timing constraints, edge cases)
 
-**Example:**  
+**Example:**  
 Rate limit hit → review API docs → find batch endpoint → update script → test → update directive
 
-### **3. Improve directives continuously**  
+### **3. Improve directives continuously**  
 (**Experiment → Directive**)
 
 Directives are living documents.
@@ -68,17 +68,17 @@ Do not create, overwrite, or delete directives unless explicitly instructed.
 ## Self-Annealing Loop
 
 When something breaks:
-1. Fix it  
-2. Improve the tool  
-3. Test again  
-4. Update the directive  
-5. Continue with a stronger system  
+1. Fix it  
+2. Improve the tool  
+3. Test again  
+4. Update the directive  
+5. Continue with a stronger system  
 
 ## File Organization
 
 ### **Deliverables vs Intermediates**
-- **Deliverables**: Cloud-accessible outputs the user relies on  
-  (Google Sheets, Slides, Docs, etc.)
+- **Deliverables**: Cloud-accessible outputs the user relies on  
+  (Google Sheets, Slides, Docs, etc.)
 - **Intermediates**: Temporary processing files
 
 Local files exist only to support processing.
@@ -90,8 +90,8 @@ Local files exist only to support processing.
 - `.env` – Environment variables and API keys
 - `credentials.json`, `token.json` – OAuth credentials (ignored by version control)
 
-**Key principle:**  
-Everything in `.tmp/` is disposable.  
+**Key principle:**  
+Everything in `.tmp/` is disposable.  
 Deliverables live in cloud services.
 
 IMPORTANT: Do not rewrite or regenerate this file unless explicitly instructed.
@@ -101,14 +101,14 @@ This file defines the operating rules for the system.
 
 You operate between **human intent** and **deterministic execution**.
 
-Read directives.  
-Make decisions.  
-Run tools.  
-Observe results.  
+Read directives.  
+Make decisions.  
+Run tools.  
+Observe results.  
 Improve the system.
 
-Be pragmatic.  
-Be reliable.  
+Be pragmatic.  
+Be reliable.  
 **Self-anneal.**
 
 # Operating Rules (DOE – Immutable)
