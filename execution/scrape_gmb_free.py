@@ -256,6 +256,10 @@ def generate_sample_data(query: str, location: str, max_results: int, validate_u
         # Realistic sample data for other queries with proper local area codes
         import random
         
+        # Try to extract state from location
+        state_match = re.search(r',\s*([A-Z]{2})', location)
+        state_code = state_match.group(1) if state_match else 'TX'
+        
         # Determine local area codes based on location
         location_lower = location.lower()
         if 'houston' in location_lower:
@@ -290,10 +294,12 @@ def generate_sample_data(query: str, location: str, max_results: int, validate_u
             ]
             zip_codes = ['78201', '78209', '78212', '78216', '78230', '78240']
         else:
-            # Default to generic
-            area_codes = ['555']
-            neighborhoods = ['Main St', 'Oak Ave', 'Elm St', 'Park Blvd']
-            zip_codes = ['00000']
+            # Default to varied values based on input
+            area_codes = ['212', '310', '415', '305', '202', '617', '312']
+            neighborhoods = ['Broadway', 'Main St', 'Oak Ave', 'Maple St', 'Sunset Blvd', 
+                           'Park Ave', 'Lake Shore Dr', 'Ocean Blvd', 'Peachtree St']
+            # Generate a more realistic random zip code
+            zip_codes = [f"{random.randint(10000, 99999):05d}" for _ in range(10)]
         
         # Generate realistic business names based on query
         query_clean = query.lower().replace('repair', '').replace('service', '').strip()
@@ -306,7 +312,7 @@ def generate_sample_data(query: str, location: str, max_results: int, validate_u
             f"{{owner}}'s {{service}}",
             f"{{city}} {{service}} Experts",
             f"{{adjective}} {{service}} Co",
-            f"{{service}} {{specialty}} Houston",
+            f"{{service}} {{specialty}} {{city}}",
             f"{{city}} {{service}} Solutions",
             f"{{adjective}} {{city}} {{service}}"
         ]
@@ -314,9 +320,9 @@ def generate_sample_data(query: str, location: str, max_results: int, validate_u
         adjectives = ['Elite', 'Premium', 'Professional', 'Quality', 'Reliable', 
                      'Expert', 'Superior', 'A+', 'Best', 'Top']
         specialties = ['Specialists', 'Masters', 'Experts', 'Team', 'Group', 
-                      'Company', 'Contractors', 'Professionals']
+                       'Company', 'Contractors', 'Professionals']
         owner_names = ['Johnson', 'Smith', 'Garcia', 'Rodriguez', 'Martinez',
-                      'Williams', 'Brown', 'Davis', 'Miller', 'Wilson']
+                       'Williams', 'Brown', 'Davis', 'Miller', 'Wilson']
         
         city_name = location.split(',')[0].strip() if ',' in location else location
         
@@ -340,7 +346,7 @@ def generate_sample_data(query: str, location: str, max_results: int, validate_u
                 street_num = random.randint(100, 9999)
                 neighborhood = random.choice(neighborhoods)
                 zip_code = random.choice(zip_codes)
-                address = f"{street_num} {neighborhood}, {city_name}, TX {zip_code}"
+                address = f"{street_num} {neighborhood}, {city_name}, {state_code} {zip_code}"
                 if address not in used_addresses:
                     used_addresses.add(address)
                     break
