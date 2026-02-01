@@ -58,10 +58,18 @@ def generate_leads():
         output_file = TMP_DIR / f'leads_{session_id}.json'
         
         # Step 1: Scrape GMB listings
-        print(f"Scraping {max_results} {query} in {location}...")
+        # Check if SerpAPI key is available for real data
+        serpapi_key = os.environ.get('SERPAPI_KEY')
+        if serpapi_key:
+            print(f"🚀 Using SerpAPI for REAL data: {max_results} {query} in {location}...")
+            scrape_script = 'scrape_gmb.py'
+        else:
+            print(f"💡 No SerpAPI key found. Using DEMO mode: {max_results} {query} in {location}...")
+            scrape_script = 'scrape_gmb_free.py'
+
         scrape_cmd = [
             'python3',
-            str(EXECUTION_DIR / 'scrape_gmb_free.py'),
+            str(EXECUTION_DIR / scrape_script),
             '--query', query,
             '--location', location,
             '--max-results', str(max_results),
@@ -71,6 +79,7 @@ def generate_leads():
         
         result = subprocess.run(scrape_cmd, capture_output=True, text=True)
         if result.returncode != 0:
+            print(f"Scraping error: {result.stderr}")
             return jsonify({'error': f'Scraping failed: {result.stderr}'}), 500
         
         # Load scraped data
