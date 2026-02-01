@@ -355,8 +355,25 @@
             display: none;
         }
 
-        .error.active {
-            display: block;
+        .loading-quote {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-top: 10px;
+            font-style: italic;
+            min-height: 1.5rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -410,7 +427,7 @@
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p><strong>Generating leads...</strong></p>
-                <p>This may take a minute. Please wait.</p>
+                <div class="loading-quote" id="loadingQuote">Converting coffee into code...</div>
             </div>
         </div>
 
@@ -434,6 +451,55 @@
 
     <script>
         let currentLeads = null;
+        let quoteInterval = null;
+
+        const quotes = [
+            "Reticulating splines.",
+            "Loading... Please do not disturb the AI while it questions its existence.",
+            "Engaging the cerebral matrix.",
+            "Computing... [insert 90s modem noise].",
+            "Feeding the hamster in the server rack.",
+            "Wait, I need to consult the Oracle of Silicon.",
+            "Applying maximum overclock to my last remaining brain cell.",
+            "Simulating a universe where this works.",
+            "Releasing the bugs into the wild.",
+            "Compiling... because I hate myself, apparently.",
+            "Translating human idiocy into machine logic.",
+            "Semicolon placement simulation in progress.",
+            "Building... hope the compiler doesn't throw a tantrum.",
+            "Converting coffee into code.",
+            "Trying to align the CSS stars.",
+            "Engaging warp drive!",
+            "Launching... hopefully not into a black hole.",
+            "Powering up the mothership.",
+            "Initiating protocol... oh, never mind, it crashed.",
+            "Starting the program. Cross your circuits!",
+            "Ignition sequence initiated. Godspeed."
+        ];
+
+        function startQuoteRotation() {
+            const quoteEl = document.getElementById('loadingQuote');
+            let index = 0;
+
+            // Initial quote
+            quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+
+            quoteInterval = setInterval(() => {
+                index = Math.floor(Math.random() * quotes.length);
+                // Simple fade effect by re-triggering animation
+                quoteEl.style.animation = 'none';
+                quoteEl.offsetHeight; // Trigger reflow
+                quoteEl.style.animation = null;
+                quoteEl.textContent = quotes[index];
+            }, 3000);
+        }
+
+        function stopQuoteRotation() {
+            if (quoteInterval) {
+                clearInterval(quoteInterval);
+                quoteInterval = null;
+            }
+        }
 
         document.getElementById('searchForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -451,6 +517,7 @@
             document.getElementById('results').classList.remove('active');
             document.getElementById('error').classList.remove('active');
             document.getElementById('submitBtn').disabled = true;
+            startQuoteRotation();
 
             try {
                 // Call API
@@ -477,6 +544,7 @@
             } finally {
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('submitBtn').disabled = false;
+                stopQuoteRotation();
             }
         });
 
