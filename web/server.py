@@ -79,8 +79,9 @@ def generate_leads():
         
         result = subprocess.run(scrape_cmd, capture_output=True, text=True)
         if result.returncode != 0:
-            print(f"Scraping error: {result.stderr}")
-            return jsonify({'error': f'Scraping failed: {result.stderr}'}), 500
+            error_msg = result.stderr or result.stdout or "Unknown scraping error"
+            print(f"Scraping error: {error_msg}")
+            return jsonify({'error': f'Scraping failed: {error_msg}'}), 500
         
         # Load scraped data
         with open(output_file, 'r') as f:
