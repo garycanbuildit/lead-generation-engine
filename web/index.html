@@ -565,9 +565,8 @@
         function displayTable(leads) {
             const table = document.getElementById('csvTable');
             const headers = [
-                'Name', 'Website', 'Phone', 'Email', 'Score',
-                'Facebook', 'Instagram', 'TikTok', 'X', 'LinkedIn',
-                'Address', 'Rating', 'Reviews'
+                'Name', 'Score', 'Website', 'Email', 'Phone', 'Address',
+                'Rating', 'Reviews', 'Facebook', 'Instagram', 'TikTok', 'X', 'LinkedIn'
             ];
 
             let html = '<thead><tr>';
@@ -582,18 +581,18 @@
 
                 html += '<tr>';
                 html += `<td>${lead.name || ''}</td>`;
+                html += `<td>${lead.lead_score || 'N/A'}</td>`;
                 html += `<td>${lead.website && lead.website !== 'N/A' ? `<a href="${lead.website}" target="_blank">Link</a>` : ''}</td>`;
-                html += `<td>${lead.phone || ''}</td>`;
                 html += `<td>${emails}</td>`;
-                html += `<td>${lead.lead_score || ''}</td>`;
+                html += `<td>${lead.phone || ''}</td>`;
+                html += `<td>${lead.address || ''}</td>`;
+                html += `<td>${lead.rating || ''}</td>`;
+                html += `<td>${lead.reviews || ''}</td>`;
                 html += `<td>${social.facebook ? `<a href="${social.facebook}" target="_blank">Link</a>` : ''}</td>`;
                 html += `<td>${social.instagram ? `<a href="${social.instagram}" target="_blank">Link</a>` : ''}</td>`;
                 html += `<td>${social.tiktok ? `<a href="${social.tiktok}" target="_blank">Link</a>` : ''}</td>`;
                 html += `<td>${social.twitter ? `<a href="${social.twitter}" target="_blank">Link</a>` : ''}</td>`;
                 html += `<td>${social.linkedin ? `<a href="${social.linkedin}" target="_blank">Link</a>` : ''}</td>`;
-                html += `<td>${lead.address || ''}</td>`;
-                html += `<td>${lead.rating || ''}</td>`;
-                html += `<td>${lead.reviews || ''}</td>`;
                 html += '</tr>';
             });
 
