@@ -100,10 +100,9 @@ class GMBScraper:
             print("Error: 'requests' library not installed. Run: pip install requests")
             return []
         
-        api_key = os.getenv('SERPAPI_KEY')
+        api_key = os.environ.get('SERPAPI_KEY') or os.getenv('SERPAPI_KEY')
         if not api_key:
-            print("Error: SERPAPI_KEY not found in .env file")
-            print("Get your API key at: https://serpapi.com/")
+            print("Error: SERPAPI_KEY not found in environment")
             return []
         
         print(f"🔍 Searching for '{query}' in '{location}' using SerpAPI...")
@@ -113,16 +112,32 @@ class GMBScraper:
             'engine': 'google_maps',
             'q': query,
             'location': location,
-            'api_key': api_key,
-            'num': min(max_results, 20)  # SerpAPI limit per request
+            'api_key': api_key
         }
         
         try:
-            response = requests.get('https://serpapi.com/search', params=params)
+            response = requests.get('https://serpapi.com/search', params=params, timeout=30)
             response.raise_for_status()
             data = response.json()
             
+            # Check for SerpAPI errors in the JSON response
+            if 'error' in data:
+                print(f"❌ SerpAPI Error: {data['error']}")
+                return []
+            
+            # SerpAPI Google Maps results are usually in 'local_results'
+            # But sometimes if only one result is found, it looks different
             results = data.get('local_results', [])
+            
+            if not results and 'place_results' in data:
+                # If searching for a specific place, it might be in place_results
+                results = [data['place_results']]
+            
+            if not results:
+                print(f"⚠️  No results found for '{query}' in '{location}'")
+                # Log a snippet of the response for debugging if no results found
+                print(f"DEBUG: Response keys: {list(data.keys())}")
+                return []
             
             for result in results[:max_results]:
                 lead_data = {
@@ -144,11 +159,14 @@ class GMBScraper:
             
             print(f"\n✅ Successfully scraped {len(leads)} leads")
             
+        except requests.exceptions.HTTPError as e:
+            print(f"❌ HTTP Error: {e.response.status_code} - {e.response.text}")
+            return []
         except requests.exceptions.RequestException as e:
-            print(f"Error making API request: {e}")
+            print(f"❌ Network Error: {e}")
             return []
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            print(f"❌ Unexpected Error: {e}")
             return []
         
         return leads
