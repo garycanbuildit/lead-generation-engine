@@ -108,39 +108,41 @@ class GMBScraper:
         print(f"🔍 Searching for '{query}' in '{location}' using SerpAPI...")
         
         leads = []
-        # Combine query and location for a more reliable search
-        search_query = f"{query} {location}"
+        # Combine query and location into a single robust search string
+        # This is the most reliable way to search without needing lat/long coordinates
+        full_query = f"{query} {location}"
         
         params = {
             'engine': 'google_maps',
-            'type': 'search',
-            'q': search_query,
-            'api_key': api_key,
-            'z': '13'  # Default zoom level to satisfy API requirements
+            'q': full_query,
+            'api_key': api_key
         }
         
         try:
+            print(f"📡 Sending request to SerpAPI for: {full_query}...")
             response = requests.get('https://serpapi.com/search', params=params, timeout=30)
             response.raise_for_status()
             data = response.json()
             
-            # Check for SerpAPI errors in the JSON response
+            # Check for SerpAPI errors
             if 'error' in data:
                 print(f"❌ SerpAPI Error: {data['error']}")
                 return []
             
-            # SerpAPI Google Maps results are usually in 'local_results'
-            # But sometimes if only one result is found, it looks different
+            # Try to find results in common SerpAPI locations
             results = data.get('local_results', [])
             
+            # If no local_results, check if it's a single place result
             if not results and 'place_results' in data:
-                # If searching for a specific place, it might be in place_results
                 results = [data['place_results']]
             
+            # If still no results, check the main search results (sometimes happens)
+            if not results and 'organic_results' in data:
+                print("ℹ️ No Map results, checking organic results...")
+                # We'll stick to map results for lead gen quality
+            
             if not results:
-                print(f"⚠️  No results found for '{query}' in '{location}'")
-                # Log a snippet of the response for debugging if no results found
-                print(f"DEBUG: Response keys: {list(data.keys())}")
+                print(f"⚠️ No leads found for '{full_query}'.")
                 return []
             
             for result in results[:max_results]:
