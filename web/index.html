@@ -458,7 +458,8 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to generate leads');
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'Failed to generate leads');
                 }
 
                 const result = await response.json();
