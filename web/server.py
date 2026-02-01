@@ -96,8 +96,7 @@ def generate_leads():
                 'python3',
                 str(EXECUTION_DIR / 'enrich_leads.py'),
                 '--input', str(output_file),
-                '--output', str(enriched_file),
-                '--delay', '1.0'
+                '--delay', '0.5' # Faster for better UX
             ]
             
             result = subprocess.run(enrich_cmd, capture_output=True, text=True)
