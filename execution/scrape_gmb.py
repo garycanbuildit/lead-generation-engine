@@ -108,11 +108,15 @@ class GMBScraper:
         print(f"🔍 Searching for '{query}' in '{location}' using SerpAPI...")
         
         leads = []
+        # Combine query and location for a more reliable search
+        search_query = f"{query} {location}"
+        
         params = {
             'engine': 'google_maps',
-            'q': query,
-            'location': location,
-            'api_key': api_key
+            'type': 'search',
+            'q': search_query,
+            'api_key': api_key,
+            'z': '13'  # Default zoom level to satisfy API requirements
         }
         
         try:
